@@ -1,0 +1,206 @@
+mimic.inputevents_mv: https://mimic.physionet.org/mimictables/inputevents_mv/
+ROW_ID
+SUBJECT_ID
+HADM_ID
+ICUSTAY_ID
+STARTTIME
+ENDTIME
+ITEMID
+AMOUNT
+AMOUNTUOM
+RATE
+RATEUOM
+STORETIME
+CGID
+ORDERID
+LINKORDERID
+ORDERCATEGORYNAME supportingInformation
+SECONDARYORDERCATEGORYNAME supportingInformation
+ORDERCOMPONENTTYPEDDESCRIPTION supportingInformation
+ORDERCATEGORYDESCRIPTION supportingInformation
+PATIENTWEIGHT supportingInformation
+TOTALAMOUNT dosage_total_amount
+TOTALAMOUNTUOM dosage_total_unit
+ISOPENBAG 'note'
+CONTINUEINNEXTDEPT
+CANCELREASON detectedIssue
+STATUSDESCRIPTION status
+COMMENTS_EDITEDBY statusReason_performer
+COMMENTS_CANCELEDBY detectedIssue_performer
+COMMENTS_DATE detectedIssue_date
+ORIGINALAMOUNT
+ORIGINALRATE
+
+
+mimic.d_items: https://mimic.physionet.org/mimictables/d_items/
+ROW_ID
+ITEMID
+LABEL 'note'
+ABBREVIATION (drop, no new information)
+DBSOURCE 'note'
+LINKSTO
+CATEGORY 'method'
+UNITNAME (drop, less complete than valueQuantity)
+PARAM_TYPE 'note'
+CONCEPTID (drop, all NONE)
+
+
+fhir.medicationDispense: http://hl7.org/fhir/medicationdispense.html
+identifier
+partOf
+status
+statusReason: (Choose ONE)
+- statusReasonCodeableConcept
+- statusReasonReference
+category
+medication: (Choose ONE)
+- medicationCodeableConcept
+- medicationReference
+subject
+context
+supportingInformation
+performer:
+- function
+- actor
+location
+authorizingPrescription
+type
+quantity
+daysSupply
+whenPrepared
+whenHandedOver
+destination
+receiver
+note
+dosageInstruction
+substitution
+- wasSubstituted
+- type
+- reason
+- responsibleParty
+detectedIssue
+eventHistory
+
+
+#### INPUTEVENTS_MV MAPPING:
+
+||Original format | FHIR resource format|
+|------|:-----|:-----|
+|1|mimic.inputevents_mv.ROW_ID|fhir.medicationDispense.identifier|
+|2|mimic.inputevents_mv.SUBJECT_ID|fhir.medicationDispense.subject|
+|3|mimic.inputevents_mv.HADM_ID|fhir.medicationDispense.encounter|
+|4|mimic.inputevents_mv.ICUSTAY_ID|fhir.medicationDispense.partOf|
+|5|mimic.inputevents_mv.ITEMID|fhir.medicationDispense.medicationCodeableConcept|
+|6|mimic.inputevents_mv.STARTTIME|fhir.medicationDispense.whenHandedOver_start|
+|7|mimic.inputevents_mv.ENDTIME|fhir.medicationDispense.whenHandedOver_end|
+|8|mimic.inputevents_mv.AMOUNT|fhir.medicationDispense.valueQuantity|
+|9|mimic.inputevents_mv.AMOUNTUOM|fhir.medicationDispense.unit|
+|10|mimic.inputevents_mv.RATE|fhir.medicationDispense.dosageRate|
+|11|mimic.inputevents_mv.RATEUOM|fhir.medicationDispense.dosageRate_unit|
+|12|mimic.inputevents_mv.CGID|fhir.medicationDispense.performer|
+|13|mimic.inputevents_mv.ORDERID|fhir.medicationDispense.type|
+|14|mimic.inputevents_mv.LINKORDERID|fhir.medicationDispense.type_sub|
+|15|mimic.inputevents_mv.ORDERCATEGORYNAME|fhir.medicationDispense.supportingInformation_order_catName|
+|16|mimic.inputevents_mv.SECONDARYORDERCATEGORYNAME|fhir.medicationDispense.supportingInformation_order_secCatName|
+|17|mimic.inputevents_mv.ORDERCOMPONENTTYPEDESCRIPTION|fhir.medicationDispense.supportingInformation_order_desc_componentTyped|
+|18|mimic.inputevents_mv.ORDERCATEGORYDESCRIPTION|fhir.medicationDispense.supportingInformation_order_desc_cat|
+|19|mimic.inputevents_mv.PATIENTWEIGHT|fhir.medicationDispense.supportingInformation_patientWeight|
+|20|mimic.inputevents_mv.ORIGINALAMOUNT|fhir.medicationDispense.dosageInstruction_original_amount|
+|21|mimic.inputevents_mv.ORIGINALRATE|fhir.medicationDispense.dosageInstruction_original_rate|
+|22|mimic.inputevents_mv.TOTALAMOUNT|fhir.medicationDispense.dosageInstruction_total_amount|
+|23|mimic.inputevents_mv.TOTALAMOUNTUOM|fhir.medicationDispense.dosageInstruction_total_unit|
+|24|mimic.inputevents_mv.ISOPENBAG|fhir.medicationDispense.dosageInstruction_openBag|
+|25|mimic.inputevents_mv.CONTINUEINNEXTDEPT|fhir.medicationDispense.eventHistory_contExtDep|
+|26|mimic.inputevents_mv.CANCELREASON|fhir.medicationDispense.detectedIssue_code|
+|27|mimic.inputevents_mv.STATUSDESCRIPTION|fhir.medicationDispense.status|
+|28|mimic.inputevents_mv.COMMENTS_EDITEDBY|fhir.medicationDispense.performer_comment_edit|
+|29|mimic.inputevents_mv.COMMENTS_CANCELEDBY|fhir.medicationDispense.performer_comment_cancel|
+|30|mimic.inputevents_mv.COMMENTS_DATE|fhir.medicationDispense.detectedIssue_date|
+|31|mimic.d_items.(LABEL+DBSOURCE+PARAM_TYPE)|fhir.medicationDispense.note|
+
+
+EXAMPLE:
+https://www.hl7.org/fhir/medicationdispenseexample8.json.html
+{
+  "resourceType": "MedicationDispense",
+  "id": "meddisp008",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: meddisp008</p><p><b>contained</b>: </p><p><b>status</b>: completed</p><p><b>medication</b>: id: medexample015; Capecitabine 500mg oral tablet (Xeloda) <span>(Details : {RxNorm code '213293' = 'Xeloda 500 MG Oral Tablet', given as 'Capecitabine 500mg oral tablet (Xeloda)'})</span></p><p><b>subject</b>: <a>Donald Duck</a></p><h3>Performers</h3><table><tr><td>-</td><td><b>Actor</b></td></tr><tr><td>*</td><td><a>Practitioner/f006</a></td></tr></table><p><b>authorizingPrescription</b>: <a>MedicationRequest/medrx0309</a></p><p><b>dosageInstruction</b>: </p></div>"
+  },
+  "contained": [
+    {
+      "resourceType": "Medication",
+      "id": "medexample015",
+      "code": {
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "213293",
+            "display": "Capecitabine 500mg oral tablet (Xeloda)"
+          }
+        ]
+      }
+    }
+  ],
+  "status": "completed",
+  "medicationReference": {
+    "reference": "#medexample015"
+  },
+  "subject": {
+    "reference": "Patient/pat1",
+    "display": "Donald Duck"
+  },
+  "performer": [
+    {
+      "actor": {
+        "reference": "Practitioner/f006"
+      }
+    }
+  ],
+  "authorizingPrescription": [
+    {
+      "reference": "MedicationRequest/medrx0309"
+    }
+  ],
+  "dosageInstruction": [
+    {
+      "sequence": 1,
+      "timing": {
+        "repeat": {
+          "frequency": 2,
+          "period": 21,
+          "periodUnit": "d"
+        }
+      },
+      "route": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394899003",
+            "display": "oral administration of treatment"
+          }
+        ]
+      },
+      "doseAndRate": [
+        {
+          "type": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                "code": "ordered",
+                "display": "Ordered"
+              }
+            ]
+          },
+          "doseQuantity": {
+            "value": 500,
+            "unit": "mg",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg"
+          }
+        }
+      ]
+    }
+  ]
+}

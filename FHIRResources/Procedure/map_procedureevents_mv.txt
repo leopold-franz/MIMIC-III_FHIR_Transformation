@@ -1,0 +1,205 @@
+mimic.proceduresevents_mv: https://mimic.physionet.org/mimictables/procedureevents_mv/
+ROW_ID
+SUBJECT_ID
+HADM_ID
+ICUSTAY_ID
+STARTTIME
+ENDTIME
+ITEMID
+VALUE
+VALUEOM - Mostly time(min, sec hour, days, or none which can be minute or even negative!!) and can be incorrect! probably better to just calculate the right time from difference between STARTTIME and ENDTIME.
+LOCATION
+LOCATIONCATEGORY
+STORETIME
+CGID
+ORDERID
+LINKORDERID
+ORDERCATEGORYNAME
+SECONDARYORDERCATEGORYNAME
+ORDERCATEGORYDESCRIPTION
+ISOPENBAG
+CONTINUEINEXTDEPT
+CANCELREASON
+STATUSDESCRIPTION - If Rewritten - Incorrect information was input, and so the information in this row was rewritten (these rows are primarily useful for auditing purposes - the rates/amounts described were not delivered and so should not be used if determining what compounds a patient has received)
+COMMENTS_EDITEDBY
+COMMENTS_CANCELEDBY
+COMMENTS_DATE
+
+mimic.d_items: https://mimic.physionet.org/mimictables/d_items/
+ROW_ID
+ITEMID
+LABEL
+ABBREVIATION
+DBSOURCE
+LINKSTO
+CATEGORY
+UNITNAME
+PARAM_TYPE
+CONCEPTID
+
+
+fhir.procedure: https://www.hl7.org/fhir/procedure.html
+identifier
+instantiatesCanonical (instanties fhir protocol/defintion)
+instantiatesUri
+basedOn
+partOf
+status
+statusReason
+category
+code
+subject
+encounter
+performed: (Choose ONE)
+- performedDateTime
+- performedPeriod
+- performedString
+- performedAge
+- performedRange
+recorder
+asserter
+performer:
+- function
+- actor
+- onBehalfOf
+location
+reasonCode
+reasonReference
+bodySite
+outcome
+report
+complication
+complicationDetail
+followUp
+note
+focalDevice:
+- action
+- manipulated
+usedReference
+usedCode
+
+
+#### PROCEDUREEVENTS_MV MAPPING:<br>
+||Original format | FHIR resource format|
+|------|:-----|:-----|
+|1|mimic.procedureevents_mv.ROW_ID | fhir.procedure.identifier|
+|2|mimic.procedureevents_mv.SUBJECT_ID | fhir.procedure.subject|
+|3|mimic.procedureevents_mv.HADM_ID | fhir.procedure.encounter|
+|4|mimic.procedureevents_mv.ICUSTAY_ID| fhir.procedure.partOf|
+|5|mimic.procedureevents_mv.STARTTIME| fhir.procedure.performedRange_start|
+|6|mimic.procedureevents_mv.ENDTIME| fhir.procedure.performedRange_end|
+|7|mimic.procedureevents_mv.ITEMID| fhir.procedure.code|
+|8|mimic.procedureevents_mv.VALUE| fhir.procedure.outcome_value|
+|9|mimic.procedureevents_mv.VALUEOM | fhir.procedure.outcome_unit|
+|10|mimic.procedureevents_mv.LOCATION| fhir.procedure.location_name|
+|11|mimic.procedureevents_mv.LOCATIONCATEGORY| fhir.procedure.location_category|
+|12|mimic.procedureevents_mv.CGID|fhir.procedure.performer|
+|13|mimic.procedureevents_mv.ORDERID| fhir.procedure.basedOn|
+|14|mimic.procedureevents_mv.LINKORDERID|fhir.procedure.basedOn_linked|
+|15|mimic.procedureevents_mv.ORDERCATEGORYNAME| fhir.procedure.category_order_name|
+|16|mimic.procedureevents_mv.SECONDARYORDERCATEGORYNAME|fhir.procedure.category_secOrder_name|
+|17|mimic.procedureevents_mv.ORDERCATEGORYDESCRIPTION|fhir.procedure.category_order_description|
+|18|mimic.procedureevents_mv.ISOPENBAG| fhir.procedure.usedReference_openBag|
+|19|mimic.procedureevents_mv.CONTINUEINEXTDEPT| fhir.procedure.report_contExtDep|
+|20|mimic.procedureevents_mv.CANCELREASON| fhir.procedure.report_cancelReason|
+|21|mimic.procedureevents_mv.STATUSDESCRIPTION| fhir.procedure.status|
+|22|mimic.procedureevents_mv.COMMENTS_EDITEDBY| fhir.procedure.report_editedBy|
+|23|mimic.procedureevents_mv.COMMENTS_CANCELEDBY| fhir.procedure.report_canceledBy|
+|24|mimic.procedureevents_mv.COMMENTS_DATE| fhir.procedure.report_canceledDate|
+|25|mimic.d_items.(LABEL+DBSOURCE+PARAM_TYPE)|mimic.procedure.note|
+|26|mimic.d_items.CATEGORY|mimic.procedure.category|
+
+EXAMPLE:
+https://www.hl7.org/fhir/procedure-example-biopsy.json.html
+{
+  "resourceType": "Procedure",
+  "id": "biopsy",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Biopsy of suspected melanoma L) arm</div>"
+  },
+  "status": "completed",
+  "category": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "103693007",
+        "display": "Diagnostic procedure (procedure)"
+      }
+    ],
+    "text": "Diagnostic procedure"
+  },
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "90105005",
+        "display": "Biopsy of soft tissue of forearm (Procedure)"
+      }
+    ],
+    "text": "Biopsy of suspected melanoma L) arm"
+  },
+  "subject": {
+    "reference": "Patient/example"
+  },
+  "performedDateTime": "2014-02-03",
+  "performer": [
+    {
+      "actor": {
+        "reference": "Practitioner/example",
+        "display": "Dr Bert Biopser"
+      }
+    }
+  ],
+  "reasonCode": [
+    {
+      "text": "Dark lesion l) forearm. getting darker last 3 months."
+    }
+  ],
+  "bodySite": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "368225008",
+          "display": "Entire Left Forearm"
+        }
+      ],
+      "text": "Left forearm"
+    }
+  ],
+  "complication": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "67750007",
+          "display": "Ineffective airway clearance (finding)"
+        }
+      ],
+      "text": "Ineffective airway clearance"
+    }
+  ],
+  "followUp": [
+    {
+      "text": "Review in clinic"
+    }
+  ],
+  "note": [
+    {
+      "text": "Standard Biopsy"
+    }
+  ],
+  "usedCode": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "79068005",
+          "display": "Needle, device (physical object)"
+        }
+      ],
+      "text": "30-guage needle"
+    }
+  ]
+}

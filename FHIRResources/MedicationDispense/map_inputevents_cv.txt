@@ -1,0 +1,189 @@
+mimic.inputevents_cv: https://mimic.physionet.org/mimictables/inputevents_cv/
+ROW_ID 'identifier'
+SUBJECT_ID 'subject'
+HADM_ID 'encounter'
+ICUSTAY_ID 'partOf'
+CHARTTIME 'whenHandedOver'
+ITEMID 'category'
+AMOUNT 'valueQuantity'
+AMOUNTUOM 'unit'
+RATE 'dosageRate'
+RATEUOM 'dosageRateUnit'
+STORETIME
+CGID 'performer'
+ORDERID 'type'
+LINKORDERID 'typeSub'
+STOPPED 'status'
+NEWBOTTLE 'note' ("1 NEWBOTTLE")
+ORIGINALAMOUNT 'dosageOriginalAmount'
+ORIGINALAMOUNTUOM 'dosageOriginalAmountUOM'
+ORIGNALROUTE 'dosageOriginalRoute'
+ORIGINALRATE 'dosageOriginalRate'
+ORIGINALRATEUOM 'dosageOriginalRateUOM'
+ORIGINALSITE 'dosageOriginalSite'
+
+
+mimic.d_items: https://mimic.physionet.org/mimictables/d_items/
+ROW_ID
+ITEMID
+LABEL 'note'
+ABBREVIATION (drop, no new information)
+DBSOURCE 'note'
+LINKSTO
+CATEGORY 'method'
+UNITNAME (drop, less complete than valueQuantity)
+PARAM_TYPE 'note'
+CONCEPTID (drop, all NONE)
+
+
+fhir.medicationDispense: http://hl7.org/fhir/medicationdispense.html
+identifier
+partOf
+status
+statusReason: (Choose ONE)
+- statusReasonCodeableConcept
+- statusReasonReference
+category
+medication: (Choose ONE)
+- medicationCodeableConcept
+- medicationReference
+subject
+context
+supportingInformation
+performer:
+- function
+- actor
+location
+authorizingPrescription
+type
+quantity
+daysSupply
+whenPrepared
+whenHandedOver
+destination
+receiver
+note
+dosageInstruction
+substitution
+- wasSubstituted
+- type
+- reason
+- responsibleParty
+detectedIssue
+eventHistory
+
+
+#### INPUTEVENTS_CV MAPPING:
+
+||Original format | FHIR resource format|
+|------|:-----|:-----|
+|1|mimic.inputevents_cv.ROW_ID|fhir.medicationDispense.identifier|
+|2|mimic.inputevents_cv.SUBJECT_ID | fhir.medicationDispense.subject|
+|3|mimic.inputevents_cv.HADM_ID | fhir.medicationDispense.encounter|
+|4|mimic.inputevents_cv.ICUSTAY_ID | fhir.medicationDispense.partOf|
+|5|mimic.inputevents_cv.ITEMID | fhir.medicationDispense.medicationCodeableConcept|
+|6|mimic.inputevents_cv.CHARTTIME | fhir.medicationDispense.whenHandedOver|
+|7|mimic.inputevents_cv.AMOUNT | fhir.medicationDispense.valueQuantity|
+|8|mimic.inputevents_cv.AMOUNTUOM | fhir.medicationDispense.unit|
+|9|mimic.inputevents_cv.RATE | fhir.medicationDispense.dosageRate|
+|10|mimic.inputevents_cv.RATEUOM | fhir.medicationDispense.dosageRate_unit|
+|11|mimic.inputevents_cv.CGID | fhir.medicationDispense.performer|
+|12|mimic.inputevents_cv.ORDERID | fhir.medicationDispense.type|
+|13|mimic.inputevents_cv.LINKORDERID | fhir.medicationDispense.type_sub|
+|14|mimic.inputevents_cv.STOPPED | fhir.medicationDispense.status|
+|15|mimic.inputevents_cv.ORIGINALAMOUNT | fhir.medicationDispense.dosageOriginal_amount|
+|16|mimic.inputevents_cv.ORIGINALAMOUNTUOM|fhir.medicationDispense.dosageOriginal_amountUnit|
+|17|mimic.inputevents_cv.ORIGNALROUTE | fhir.medicationDispense.dosageOriginal_route|
+|18|mimic.inputevents_cv.ORIGINALRATE | fhir.medicationDispense.dosageOriginal_rate|
+|19|mimic.inputevents_cv.ORIGINALRATEUOM | fhir.medicationDispense.dosageOriginal_rateUnit|
+|20|mimic.inputevents_cv.ORIGINALSITE | fhir.medicationDispense.dosageOriginal_site|
+|21|mimic.inputevents_cv.NEWBOTTLE | fhir.medicationDispense.note|
+|22|mimic.d_items.(LABEL+DBSOURCE+PARAM_TYPE) | fhir.medicationDispense.note|
+|23|mimic.d_items.CATEGORY | fhir.medicationDispense.category|
+
+
+EXAMPLE:
+https://www.hl7.org/fhir/medicationdispenseexample8.json.html
+{
+  "resourceType": "MedicationDispense",
+  "id": "meddisp008",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: meddisp008</p><p><b>contained</b>: </p><p><b>status</b>: completed</p><p><b>medication</b>: id: medexample015; Capecitabine 500mg oral tablet (Xeloda) <span>(Details : {RxNorm code '213293' = 'Xeloda 500 MG Oral Tablet', given as 'Capecitabine 500mg oral tablet (Xeloda)'})</span></p><p><b>subject</b>: <a>Donald Duck</a></p><h3>Performers</h3><table><tr><td>-</td><td><b>Actor</b></td></tr><tr><td>*</td><td><a>Practitioner/f006</a></td></tr></table><p><b>authorizingPrescription</b>: <a>MedicationRequest/medrx0309</a></p><p><b>dosageInstruction</b>: </p></div>"
+  },
+  "contained": [
+    {
+      "resourceType": "Medication",
+      "id": "medexample015",
+      "code": {
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "213293",
+            "display": "Capecitabine 500mg oral tablet (Xeloda)"
+          }
+        ]
+      }
+    }
+  ],
+  "status": "completed",
+  "medicationReference": {
+    "reference": "#medexample015"
+  },
+  "subject": {
+    "reference": "Patient/pat1",
+    "display": "Donald Duck"
+  },
+  "performer": [
+    {
+      "actor": {
+        "reference": "Practitioner/f006"
+      }
+    }
+  ],
+  "authorizingPrescription": [
+    {
+      "reference": "MedicationRequest/medrx0309"
+    }
+  ],
+  "dosageInstruction": [
+    {
+      "sequence": 1,
+      "timing": {
+        "repeat": {
+          "frequency": 2,
+          "period": 21,
+          "periodUnit": "d"
+        }
+      },
+      "route": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394899003",
+            "display": "oral administration of treatment"
+          }
+        ]
+      },
+      "doseAndRate": [
+        {
+          "type": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                "code": "ordered",
+                "display": "Ordered"
+              }
+            ]
+          },
+          "doseQuantity": {
+            "value": 500,
+            "unit": "mg",
+            "system": "http://unitsofmeasure.org",
+            "code": "mg"
+          }
+        }
+      ]
+    }
+  ]
+}

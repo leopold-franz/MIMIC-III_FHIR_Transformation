@@ -1,0 +1,114 @@
+mimic.services: https://mimic.physionet.org/mimictables/services/
+ROW_ID
+SUBJECT_ID
+HADM_ID
+TRANSFERTIME
+PREV_SERVICE
+CURR_SERVICE
+
+
+fhir.serviceRequest: http://hl7.org/fhir/servicerequest.html
+identifier
+instantiatesCanonical (instanties fhir protocol/defintion)
+instantiatesUri
+basedOn
+reoakces
+requisition
+status
+intent
+category
+priority
+doNotPerform
+code
+orderDetail
+quantity (Choose ONE)
+- quantityQuantity
+- quantityRatio
+- quantityRange
+subject
+encounter
+occurance:(Choose ONE)
+- occuranceDateTime
+- occurancePeriod
+- occuranceTiming
+asNeeded: (Choose ONE)
+- asNeededBoolean
+- asNeededCodeableConcept
+authoredOn
+requester
+performerType
+performer
+locationCode
+locationReference
+reasonCode
+reasonReference
+insurance
+supportingInfo
+specimen
+bodySite
+note
+patientInstruction
+relevantHistory
+
+#### MAPPING:<br>
+
+||Original format | FHIR resource format|
+|------|:-----|:-----|
+|1|mimic.services.ROW_ID | fhir.serviceRequest.identifier|
+|2|mimic.services.SUBJECT_ID | fhir.serviceRequest.subject|
+|3|mimic.services.HADM_ID | fhir.serviceRequest.encounter|
+|4|mimic.services.TRANSFERTIME | fhir.serviceRequest.occuranceDateTime|
+|5|mimic.services.PREV_SERVICE | fhir.serviceRequest.replaces|
+|6|mimic.services.CURR_SERVICE | fhir.serviceRequest.code_name|
+
+EXAMPLE:
+http://hl7.org/fhir/servicerequest.html
+{doco
+  "resourceType" : "ServiceRequest",
+  // from Resource: id, meta, implicitRules, and language
+  // from DomainResource: text, contained, extension, and modifierExtension
+  "identifier" : [{ Identifier }], // Identifiers assigned to this order
+  "instantiatesCanonical" : [{ canonical(ActivityDefinition|PlanDefinition) }], // Instantiates FHIR protocol or definition
+  "instantiatesUri" : ["<uri>"], // Instantiates external protocol or definition
+  "basedOn" : [{ Reference(CarePlan|ServiceRequest|MedicationRequest) }], // What request fulfills
+  "replaces" : [{ Reference(ServiceRequest) }], // What request replaces
+  "requisition" : { Identifier }, // Composite Request ID
+  "status" : "<code>", // R!  draft | active | on-hold | revoked | completed | entered-in-error | unknown
+  "intent" : "<code>", // R!  proposal | plan | directive | order | original-order | reflex-order | filler-order | instance-order | option
+  "category" : [{ CodeableConcept }], // Classification of service
+  "priority" : "<code>", // routine | urgent | asap | stat
+  "doNotPerform" : <boolean>, // True if service/procedure should not be performed
+  "code" : { CodeableConcept }, // What is being requested/ordered
+  "orderDetail" : [{ CodeableConcept }], // C? Additional order information
+  // quantity[x]: Service amount. One of these 3:
+  "quantityQuantity" : { Quantity },
+  "quantityRatio" : { Ratio },
+  "quantityRange" : { Range },
+  "subject" : { Reference(Patient|Group|Location|Device) }, // R!  Individual or Entity the service is ordered for
+  "encounter" : { Reference(Encounter) }, // Encounter in which the request was created
+  // occurrence[x]: When service should occur. One of these 3:
+  "occurrenceDateTime" : "<dateTime>",
+  "occurrencePeriod" : { Period },
+  "occurrenceTiming" : { Timing },
+  // asNeeded[x]: Preconditions for service. One of these 2:
+  "asNeededBoolean" : <boolean>,
+  "asNeededCodeableConcept" : { CodeableConcept },
+  "authoredOn" : "<dateTime>", // Date request signed
+  "requester" : { Reference(Practitioner|PractitionerRole|Organization|
+   Patient|RelatedPerson|Device) }, // Who/what is requesting service
+  "performerType" : { CodeableConcept }, // Performer role
+  "performer" : [{ Reference(Practitioner|PractitionerRole|Organization|
+   CareTeam|HealthcareService|Patient|Device|RelatedPerson) }], // Requested performer
+  "locationCode" : [{ CodeableConcept }], // Requested location
+  "locationReference" : [{ Reference(Location) }], // Requested location
+  "reasonCode" : [{ CodeableConcept }], // Explanation/Justification for procedure or service
+  "reasonReference" : [{ Reference(Condition|Observation|DiagnosticReport|
+   DocumentReference) }], // Explanation/Justification for service or service
+  "insurance" : [{ Reference(Coverage|ClaimResponse) }], // Associated insurance coverage
+  "supportingInfo" : [{ Reference(Any) }], // Additional clinical information
+  "specimen" : [{ Reference(Specimen) }], // Procedure Samples
+  "bodySite" : [{ CodeableConcept }], // Location on Body
+  "note" : [{ Annotation }], // Comments
+  "patientInstruction" : "<string>", // Patient or consumer-oriented instructions
+  "relevantHistory" : [{ Reference(Provenance) }] // Request provenance
+}

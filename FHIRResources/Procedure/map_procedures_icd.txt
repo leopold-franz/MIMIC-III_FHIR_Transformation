@@ -1,0 +1,185 @@
+mimic.proceduresevents_mv: https://mimic.physionet.org/mimictables/procedureevents_mv/
+NOTE: CURRENTLY NOT USED- Don't know how to connect ICUSTAYS table to the fhir format. This table seems to be explicitly link to the ICUSTAYS though. Therefore on hold for now.
+ROW_ID
+SUBJECT_ID
+HADM_ID
+ICUSTAY_ID
+STARTTIME
+ENDTIME
+ITEMID
+VALUE
+VALUEOM - Mostly time(min, sec hour, days, or none which can be minute or even negative!!) and can be incorrect! probably better to just calculate the right time from difference between STARTTIME and ENDTIME.
+LOCATION
+LOCATIONCATEGORY
+STORETIME
+CGID
+ORDERID
+LINKORDERID
+ORDERCATEGORYNAME
+SECONDARYORDERCATEGORYNAME
+ORDERCATEGORYDESCRIPTION
+ISOPENBAG
+CONTINUEINEXTDEPT
+CANCELREASON
+STATUSDESCRIPTION - If Rewritten - Incorrect information was input, and so the information in this row was rewritten (these rows are primarily useful for auditing purposes - the rates/amounts described were not delivered and so should not be used if determining what compounds a patient has received)
+COMMENTS_EDITEDBY
+COMMENTS_CANCELEDBY
+COMMENTS_DATE
+
+mimic.procedures_icd: https://mimic.physionet.org/mimictables/procedures_icd/
+ROW_ID
+SUBJECT_ID
+HADM_ID
+SEQ_NUM
+ICD9_CODE
+
+mimic.d_icd_procedures: https://mimic.physionet.org/mimictables/d_icd_procedures/
+ROW_ID
+ICD9_CODE
+SHORT_TITLE
+LONG_TITLE
+
+
+fhir.procedure: https://www.hl7.org/fhir/procedure.html
+identifier
+instantiatesCanonical (instanties fhir protocol/defintion)
+instantiatesUri
+basedOn
+partOf
+status
+statusReason
+category
+code
+subject
+encounter
+performed: (Choose ONE)
+- performedDateTime
+- performedPeriod
+- performedString
+- performedAge
+- performedRange
+recorder
+asserter
+performer:
+- function
+- actor
+- onBehalfOf
+location
+reasonCode
+reasonReference
+bodySite
+outcome
+report
+complication
+complicationDetail
+followUp
+note
+focalDevice:
+- action
+- manipulated
+usedReference
+usedCode
+
+
+#### PROCEDURES_ICD MAPPING:<br>
+||Original format | FHIR resource format|
+|------|:-----|:-----|
+|1|mimic.procedures_icd.ROW_ID | fhir.procedure.identifier|
+|2|mimic.procedures_icd.SUBJECT_ID | fhir.procedure.subject|
+|3|mimic.procedures_icd.HADM_ID | fhir.procedure.encounter|
+|4|mimic.procedures_icd.ICD9_CODE | fhir.procedure.code_icd9|
+
+EXAMPLE:
+https://www.hl7.org/fhir/procedure-example-biopsy.json.html
+{
+  "resourceType": "Procedure",
+  "id": "biopsy",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Biopsy of suspected melanoma L) arm</div>"
+  },
+  "status": "completed",
+  "category": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "103693007",
+        "display": "Diagnostic procedure (procedure)"
+      }
+    ],
+    "text": "Diagnostic procedure"
+  },
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "90105005",
+        "display": "Biopsy of soft tissue of forearm (Procedure)"
+      }
+    ],
+    "text": "Biopsy of suspected melanoma L) arm"
+  },
+  "subject": {
+    "reference": "Patient/example"
+  },
+  "performedDateTime": "2014-02-03",
+  "performer": [
+    {
+      "actor": {
+        "reference": "Practitioner/example",
+        "display": "Dr Bert Biopser"
+      }
+    }
+  ],
+  "reasonCode": [
+    {
+      "text": "Dark lesion l) forearm. getting darker last 3 months."
+    }
+  ],
+  "bodySite": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "368225008",
+          "display": "Entire Left Forearm"
+        }
+      ],
+      "text": "Left forearm"
+    }
+  ],
+  "complication": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "67750007",
+          "display": "Ineffective airway clearance (finding)"
+        }
+      ],
+      "text": "Ineffective airway clearance"
+    }
+  ],
+  "followUp": [
+    {
+      "text": "Review in clinic"
+    }
+  ],
+  "note": [
+    {
+      "text": "Standard Biopsy"
+    }
+  ],
+  "usedCode": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "79068005",
+          "display": "Needle, device (physical object)"
+        }
+      ],
+      "text": "30-guage needle"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+mimic.prescriptions: https://mimic.physionet.org/mimictables/prescriptions/
+ROW_ID
+SUBJECT_ID
+HADM_ID
+ICUSTAY_ID
+STARTDATE
+ENDDATE
+DRUG_TYPE
+DRUG
+DRUG_NAME_POE (POE = chemical name?)
+DRUG_NAME_GENERIC
+FORMULARY_DRUG_CD
+GSN
+NDC
+PROD_STRENGTH
+DOSE_VAL_RX
+DOSE_UNIT_RX
+FORM_VAL_DISP
+FORM_UNIT_DISP
+ROUTE
+
+fhir.medicationRequest: https://www.hl7.org/fhir/medicationrequest.html
+identifier
+basedOn (link)
+status - (report status - active, on-hold, cancelled, completed, entered-in-error,stopped, draft, unknown)
+statusReason
+intent (proposal, plan, order, reflex-order, filler-order, instance-order, option)
+category
+priority
+doNotPerform (True if request is prohibiting action)
+reported: (Choose ONE)
+- reportedBoolean
+- reportedReference
+medication: (Choose ONE)
+- medicationCodeableConcept
+- medicationReference
+subject
+encounter
+supportingInformation
+authoredOn
+requester
+performer
+performerType
+recorder
+reasonCode
+reasonReference
+instantiatesUri
+basedOn
+groupIdentifier
+courseOfTherapyType
+insurance
+note
+dosageInstruction
+dispenseRequest
+- initialFill
+-- quantity
+-- duration
+- dispenceInterval
+- validityPeriod
+- numberOfRepeatsAllowed
+- quantity
+- expectedSupplyDuration
+- performer
+substitution:
+- allowed: (Choose ONE):
+-- allowedBoolean
+-- allowedCodeableConcept
+- reason
+priorPrescription
+detectedIssue
+eventHistory
+
+
+#### MAPPING: <br>
+||Original format | FHIR resource format|
+|------|:-----|:-----|
+|1|mimic.prescriptions.ROW_ID | fhir.medicationRequest.identifier|
+|2|mimic.prescriptions.SUBJECT_ID | fhir.medicationRequest.subject|
+|3|mimic.prescriptions.HADM_ID| fhir.medicationRequest.encounter|
+|4|mimic.prescriptions.ICUSTAY_ID | fhir.medicationRequest.partOf|
+|5|mimic.prescriptions.STARTDATE | fhir.medicationRequest.dispenseRequest_start|
+|6|mimic.prescriptions.ENDDATE | fhir.medicationRequest.dispenseRequest_end|
+|7|mimic.prescriptions.DRUG_TYPE | fhir.medicationRequest.category|
+|8|mimic.prescriptions.DRUG | fhir.medicationRequest.medication_name|
+|9|mimic.prescriptions.DRUG_NAME_GENERIC | fhir.medicationRequest.medication_genericName|
+|10|mimic.prescriptions.FORMULARY_DRUG_CD | fhir.medicationRequest.medication_code_CD|
+|11|mimic.prescriptions.GSN | fhir.medicationRequest.medication_code_GSN|
+|12|mimic.prescriptions.NDC | fhir.medicationRequest.medication_code_NDC|
+|13|mimic.prescriptions.DOSE_VAL_RX | fhir.medicationRequest.dosageInstruction_value|
+|14|mimic.prescriptions.DOSE_UNIT_RX | fhir.medicationRequest.dosageInstruction_unit|
+|15|mimic.prescriptions.FORM_VAL_DISP | fhir.medicationRequest.dispenseRequest_value|
+|16|mimic.prescriptions.FORM_UNIT_DISP | fhir.medicationRequest.dispenseRequest_unit|
+|17|mimic.prescriptions.ROUTE | fhir.medicationRequest.courseOfTherapyType|
+
+
+EXAMPLE:
+https://www.hl7.org/fhir/medicationrequest0301.json.html
+{
+  "resourceType": "MedicationRequest",
+  "id": "medrx0301",
+  "text": {
+    "status": "generated",
+    "div": "..."
+  },
+  "contained": [
+    {
+      "resourceType": "Medication",
+      "id": "med0310",
+      "code": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "430127000",
+            "display": "Oral Form Oxycodone (product)"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Provenance",
+      "id": "signature",
+      "target": [
+        {
+          "reference": "ServiceRequest/physiotherapy"
+        }
+      ],
+      "recorded": "2017-02-01T17:23:07Z",
+      "agent": [
+        {
+          "role": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                  "code": "AUT"
+                }
+              ]
+            }
+          ],
+          "who": {
+            "reference": "Practitioner/example",
+            "display": "Dr Adam Careful"
+          }
+        }

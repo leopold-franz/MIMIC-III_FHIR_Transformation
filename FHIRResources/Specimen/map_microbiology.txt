@@ -1,0 +1,206 @@
+mimic.microbiologyevents: https://mimic.physionet.org/mimictables/microbiologyevents/
+ROW_ID
+SUBJECT_ID
+HADM_ID
+CHARTDATE
+CHARTTIME
+SPEC_ITEMID
+SPEC_TYPE_DESC
+ORG_ITEMID
+ORG_NAME
+ISOLATE_NUM
+AB_ITEMID
+AB_NAME
+DILUTION_TEXT
+DILUTION_COMPARISON
+DILUTION_VALUE
+INTERPRETATION
+
+mimic.d_items: https://mimic.physionet.org/mimictables/d_items/
+ROW_ID
+ITEMID
+LABEL
+ABBREVIATION
+DBSOURCE
+LINKSTO
+CATEGORY
+UNITNAME
+PARAM_TYPE
+CONCEPTID
+
+
+fhir.specimen: http://hl7.org/fhir/specimen.html
+identifier
+accessionIdentifier
+status
+type
+subject
+receivedTime
+parent
+request
+collection:
+- collector
+- collected: (Choose ONE)
+-- collectedDateTime
+-- collectedPeriod
+- duration
+- quantity
+- method
+- bodySite
+- fastingStatus (Choose ONE)
+-- fastingStatusCodeableConcept
+-- fastingStatusDuration
+processing:
+- description
+- procedure
+- additive
+- time
+- time (Choose ONE)
+-- timeDateTime
+-- timePeriod
+container:
+- identifier
+- description
+- type
+- capacity
+- specimenQuantity
+- additive (Choose ONE)
+-- additiveCodeableConcept
+-- additiveReference
+condition
+note
+
+
+#### MICROBIOLOGYEVENTS MAPPING:<br>
+
+||Original format | FHIR resource format|
+|------|:-----|:-----|
+|1|mimic.microbiologyevents.ROW_ID| fhir.specimen.identifier|
+|2|mimic.microbiologyevents.SUBJECT_ID | fhir.specimen.subject|
+|3|mimic.microbiologyevents.HADM_ID | fhir.specimen.request_encounter_admission|
+|4|mimic.microbiologyevents.CHARTTIME | fhir.specimen.collection_dateTime|
+|5|mimic.microbiologyevents.SPEC_ITEMID | fhir.specimen.type_code|
+|6|mimic.microbiologyevents.SPEC_TYPE_DESC | fhir.specimen.type_name|
+|7|mimic.d_items(on SPEC).CATEGORY | fhir.specimen.type_category|
+|8|mimic.microbiologyevents.ORG_ITEMID | fhir.specimen.method_bact_code|
+|9|mimic.microbiologyevents.ORG_NAME | fhir.specimen.method_bact_name|
+|10|mimic.microbiologyevents.ISOLATE_NUM | fhir.specimen.method_colNum|
+|11|mimic.microbiologyevents.AB_ITEMID | fhir.specimen.method_antibiotic_code|
+|12|mimic.microbiologyevents.AB_NAME | fhir.specimen.method_antibiotic_name|
+|13|mimic.microbiologyevents.DILUTION_TEXT | fhir.specimen.method_dilution_description|
+|14|mimic.microbiologyevents.DILUTION_COMPARISON | fhir.specimen.method_dilution_comp|
+|15|mimic.microbiologyevents.DILUTION_VALUE | fhir.specimen.method_dilution_value|
+|16|mimic.microbiologyevents.INTERPRETATION | fhir.specimen.note_interpretation|
+|17|mimic.d_items_(SPEC/ORG/AB).(LABEL+PARAM_TYPE+DBSOURCE) | fhir.specimen.note|
+
+EXAMPLE:
+https://www.hl7.org/fhir/specimen-example.json.html
+{
+  "resourceType": "Specimen",
+  "id": "101",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: 101</p><p><b>contained</b>: </p><p><b>identifier</b>: 23234352356</p><p><b>accessionIdentifier</b>: X352356</p><p><b>status</b>: available</p><p><b>type</b>: Venous blood specimen <span>(Details : {SNOMED CT code '122555007' = 'Venous blood specimen', given as 'Venous blood specimen'})</span></p><p><b>subject</b>: <a>Peter Patient</a></p><p><b>receivedTime</b>: 04/03/2011 7:03:00 AM</p><p><b>request</b>: <a>ServiceRequest/example</a></p><h3>Collections</h3><table><tr><td>-</td><td><b>Collector</b></td><td><b>Collected[x]</b></td><td><b>Quantity</b></td><td><b>Method</b></td><td><b>BodySite</b></td></tr><tr><td>*</td><td><a>Practitioner/example</a></td><td>30/05/2011 6:15:00 AM</td><td>6 mL</td><td>Line, Venous <span>(Details : {http://terminology.hl7.org/CodeSystem/v2-0488 code 'LNV' = 'Line, Venous)</span></td><td>Right median cubital vein <span>(Details : {SNOMED CT code '49852007' = 'Median cubital vein', given as 'Structure of median cubital vein (body structure)'})</span></td></tr></table><h3>Containers</h3><table><tr><td>-</td><td><b>Identifier</b></td><td><b>Description</b></td><td><b>Type</b></td><td><b>Capacity</b></td><td><b>SpecimenQuantity</b></td><td><b>Additive[x]</b></td></tr><tr><td>*</td><td>48736-15394-75465</td><td>Green Gel tube</td><td>Vacutainer <span>(Details )</span></td><td>10 mL</td><td>6 mL</td><td>id: hep; Lithium/Li Heparin <span>(Details : {http://terminology.hl7.org/CodeSystem/v3-EntityCode code 'HEPL' = 'Lithium/Li Heparin)</span></td></tr></table><p><b>note</b>: Specimen is grossly lipemic</p></div>"
+  },
+  "contained": [
+    {
+      "resourceType": "Substance",
+      "id": "hep",
+      "code": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-EntityCode",
+            "code": "HEPL"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "system": "http://ehr.acme.org/identifiers/collections",
+      "value": "23234352356"
+    }
+  ],
+  "accessionIdentifier": {
+    "system": "http://lab.acme.org/specimens/2011",
+    "value": "X352356"
+  },
+  "status": "available",
+  "type": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "122555007",
+        "display": "Venous blood specimen"
+      }
+    ]
+  },
+  "subject": {
+    "reference": "Patient/example",
+    "display": "Peter Patient"
+  },
+  "receivedTime": "2011-03-04T07:03:00Z",
+  "request": [
+    {
+      "reference": "ServiceRequest/example"
+    }
+  ],
+  "collection": {
+    "collector": {
+      "reference": "Practitioner/example"
+    },
+    "collectedDateTime": "2011-05-30T06:15:00Z",
+    "quantity": {
+      "value": 6,
+      "unit": "mL"
+    },
+    "method": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/v2-0488",
+          "code": "LNV"
+        }
+      ]
+    },
+    "bodySite": {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "49852007",
+          "display": "Structure of median cubital vein (body structure)"
+        }
+      ],
+      "text": "Right median cubital vein"
+    }
+  },
+  "container": [
+    {
+      "identifier": [
+        {
+          "value": "48736-15394-75465"
+        }
+      ],
+      "description": "Green Gel tube",
+      "type": {
+        "text": "Vacutainer"
+      },
+      "capacity": {
+        "value": 10,
+        "unit": "mL"
+      },
+      "specimenQuantity": {
+        "value": 6,
+        "unit": "mL"
+      },
+      "additiveReference": {
+        "reference": "#hep"
+      }
+    }
+  ],
+  "note": [
+    {
+      "text": "Specimen is grossly lipemic"
+    }
+  ]
+}

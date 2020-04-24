@@ -1,0 +1,227 @@
+mimic.cptevents: https://mimic.physionet.org/mimictables/cptevents/
+ROW_ID
+SUBJECT_ID
+HADM_ID
+COSTCENTER
+CHARTDATE
+CPT_CD
+CPT_NUMBER
+CPT_SUFFIX
+TICKET_ID_SEQ
+SECTIONHEADER
+SUBSECTIONHEADER
+DESCRIPTION
+
+mimic.d_cpt: https://mimic.physionet.org/mimictables/d_cpt/
+NOTE: CURRENTLY NOT TRANSFORMED FOR NOW. (Haven't found the appropriate mapping  or use yet.)
+ROW_ID
+CATEGORY
+SECTIONRANGE (Only these ranges can be useful to add as weights to the section or subsection fields)
+SECTIONHEADER
+SUBSECTIONHEADER
+CODESUFFIX
+MINCODEINSUBSECTION (Only these ranges can be useful to add as weights to the section or subsection fields)
+MAXCODEINSUBSECTION (Only these ranges can be useful to add as weights to the section or subsection fields)
+
+fhir.claim: https://www.hl7.org/fhir/claim.html
+identifier
+status
+type
+subType
+use
+patient
+billablePeriod
+created
+enterer
+insurer
+provider
+priority
+fundsReserve
+related:
+- claim
+- relationship
+- reference
+prescription
+originalPrescription
+payee:
+- type
+- party
+referral
+facility
+careTeam:
+- sequence
+- provider
+- responsible
+- role
+- qualification
+supportingInfo:
+- sequence
+- category
+- code
+- timing: (Choose ONE)
+-- timingDate
+-- timingPeriod
+- value: (Choose ONE)
+-- valueBoolean
+-- valueString
+-- valueQuantity
+-- valueAttachment
+-- valueReference
+- reason
+diagnosis:
+- sequence
+- diagnosis: (Choose ONE)
+-- diagnosisCodeableConcept
+-- diagnosisReference
+- type
+- onAdmission
+- packageCode
+procedure
+- sequence
+- type
+- date
+- procedure: (Choose ONE)
+-- procedureCodeableConcept
+-- procedureReference
+- udi
+insurance:
+- sequence
+- focal
+- identifier
+- coverage
+- businessArrangement
+- preAuthRef
+- claimResponse
+accident:
+- date
+- type
+- location: (Choose ONE)
+-- locationAddress
+-- locationReference
+item:
+- ... check https://www.hl7.org/fhir/claim.html
+
+
+#### MAPPING: <br>
+
+||Original format | FHIR resource format|
+|------|:-----|:-----|
+|1|mimic.cptevents.ROW_ID|fhir.claim.identifier|
+|2|mimic.cptevents.SUBJECT_ID|fhir.claim.subject|
+|3|mimic.cptevents.HADM_ID|fhir.claim.encounter|
+|4|mimic.cptevents.COSTCENTER|fhir.claim.provider|
+|5|mimic.cptevents.CHARTDATE|fhir.claim.created|
+|6|mimic.cptevents.CPT_NUMBER|fhir.claim.item_category_cpt_num|
+|7|mimic.cptevents.CPT_SUFFIX|fhir.claim.item_category_cpt_str|
+|8|mimic.cptevents.TICKET_ID_SEQ|fhir.claim.item_sequence|
+|9|mimic.cptevents.DESCRIPTION|fhir.claim.item_detail|
+|10|mimic.cptevents.SECTIONHEADER|fhir.claim.type|
+|11|mimic.cptevents.SUBSECTIONHEADER|fhir.claim.subType|
+
+
+EXAMPLE:
+https://www.hl7.org/fhir/claim-example-professional.json.html
+{
+  "resourceType": "Claim",
+  "id": "860150",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the Claim</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://happypdocs.com/claim",
+      "value": "8612345"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+        "code": "professional"
+      }
+    ]
+  },
+  "use": "claim",
+  "patient": {
+    "reference": "Patient/1"
+  },
+  "created": "2014-08-16",
+  "insurer": {
+    "reference": "Organization/2"
+  },
+  "provider": {
+    "reference": "Organization/1"
+  },
+  "priority": {
+    "coding": [
+      {
+        "code": "normal"
+      }
+    ]
+  },
+  "payee": {
+    "type": {
+      "coding": [
+        {
+          "code": "provider"
+        }
+      ]
+    }
+  },
+  "careTeam": [
+    {
+      "sequence": 1,
+      "provider": {
+        "reference": "Practitioner/example"
+      }
+    }
+  ],
+  "diagnosis": [
+    {
+      "sequence": 1,
+      "diagnosisCodeableConcept": {
+        "coding": [
+          {
+            "code": "654456"
+          }
+        ]
+      }
+    }
+  ],
+  "insurance": [
+    {
+      "sequence": 1,
+      "focal": true,
+      "coverage": {
+        "reference": "Coverage/9876B1"
+      }
+    }
+  ],
+  "item": [
+    {
+      "sequence": 1,
+      "careTeamSequence": [
+        1
+      ],
+      "productOrService": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/ex-serviceproduct",
+            "code": "exam"
+          }
+        ]
+      },
+      "servicedDate": "2014-08-16",
+      "unitPrice": {
+        "value": 75.00,
+        "currency": "USD"
+      },
+      "net": {
+        "value": 75.00,
+        "currency": "USD"
+      }
+    }
+  ]
+}

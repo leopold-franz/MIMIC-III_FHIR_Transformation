@@ -1,0 +1,138 @@
+mimic.admissions: https://mimic.physionet.org/mimictables/admissions/
+ROW_ID
+SUBJECT_ID
+HADM_ID
+ADMITTIME
+DISCHTIME
+DEATHTIME
+ADMISSION_TYPE
+ADMISSION_LOCATION
+DISCHARGE_LOCATION
+INSURANCE
+LANGUAGE
+RELIGION
+MARITIAL_STATUS
+ETHNICITY
+EDREGTIME
+EDOUTTIME
+DIAGNOSIS
+HOSPITAL_EXPIRE_FLAG
+HAS_CHARTEVENTS_DATA
+
+fhir.encounter: https://www.hl7.org/fhir/patient.html (Can be bigger datatypes. Look at website for more information.)
+identifier
+status - (encounter status - planned, arrived, ..., complete)
+statusHistory: (list)
+- status
+- period
+class (encounter class)
+classHistory: (list)
+- class
+- period
+type (encounter type)
+serviceType (service type)
+priority (Urgency of encounter -> certain concept codes!)
+subject (link) patient
+episodeOfCare (link)(episodes of care that this counter should be compared against)
+basedOn (link) (Service request that initiated this encounter)
+participant (list) (participants involved in the encounter)
+- type (role of participant in encounter)
+- period (period during which participant was involved in encounter)
+- individual (link) (to participant)
+appointment (link) (link to appointment that caused encounter)
+period
+length
+reasonCode (again concept code to be looked up)
+reasonReference
+diagnosis: (list) (list of diagnosis related to this event)
+- condition (diagnosis or procedure relevant to this encounter)
+- use (role of diagnosis within encounter)
+- rank (ranking of the diagnosis for each role type)
+account (link) (accounts used for billing)
+hospitalization (dict) (details of the admission to a healthcare service)
+- preAdmissionIdentifier
+- origin (link)
+- admitSource
+- reAdmission
+- dietPreference
+- specialCourtesy
+- specialArrangement
+- destination (link)
+- dischargeDisposition
+location: (list) (locations where the patient has been, ??within the hospital??)
+- location (link)
+- status
+- physicalType
+- period
+serviceProvider (link) (organization responsible for this encounter)
+partOf (link) (other encounter this encounter is part of)
+
+
+#### ADMISSIONS MAPPING:<br>
+
+- location column (add all interim locations and periods)
+- - Could add location field by using Transfer and SERVICES mimictables
+- - Combine both mimic.admissions.EDREGTIME and mimic.admissions.EDOUTTIME to add time period for fhir.encounter.locations list
+- mimic.admissions.INSURANCE - Might be better placed in claims fhir table
+
+||Original format | FHIR resource format|
+|------|:-----|:-----|
+|1|mimic.admissions.SUBJECT_ID|fhir.encounter.subject|
+|2|mimic.admissions.HADM_ID|fhir.encounter.identifier|
+|3|'admission'|fhir.encounter.serviceType|
+|4|mimic.admissions.ADMITTIME|fhir.encounter.period_start|
+|5|mimic.admissions.DISCHTIME|fhir.encounter.period_end|
+|6|mimic.admissions.(DISCHTIME - ADMITTIME)|fhir.encounter.length|
+|7|mimic.admissions.ADMISSION_TYPE|fhir.encounter.type|
+|8|mimic.admissions.ADMISSION_LOCATION|fhir.encounter.hospitalization_origin|
+|9|mimic.admissions.DISCHARGE_LOCATION|fhir.encounter.hospitalization_destination|
+|10|mimic.admissions.INSURANCE|fhir.encounter.serviceProvider|
+|11|mimic.DIAGNOSES_ICD.ICD9_CODE|fhir.encounter.diagnosis_condition|
+|12|mimic.DIAGNOSES_ICD.SEQ_NUM|fhir.encounter.diagnosis_condition|
+|13|mimic.admissions.DIAGNOSIS|fhir.encounter.diagnosis_description|
+
+EXAMPLE:
+http://hl7.org/fhir/encounter-example-f201-20130404.json.html
+{
+  "resourceType": "Encounter",
+  "id": "f201",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: f201</p><p><b>identifier</b>: Encounter_Roel_20130404 (TEMP)</p><p><b>status</b>: finished</p><p><b>class</b>: ambulatory (Details: http://terminology.hl7.org/CodeSystem/v3-ActCode code AMB = 'ambulatory', stated as 'ambulatory')</p><p><b>type</b>: Consultation <span>(Details : {SNOMED CT code '11429006' = 'Consultation', given as 'Consultation'})</span></p><p><b>priority</b>: Normal <span>(Details : {SNOMED CT code '17621005' = 'Normal', given as 'Normal'})</span></p><p><b>subject</b>: <a>Roel</a></p><h3>Participants</h3><table><tr><td>-</td><td><b>Individual</b></td></tr><tr><td>*</td><td><a>Practitioner/f201</a></td></tr></table><p><b>reasonCode</b>: The patient had fever peaks over the last couple of days. He is worried about these peaks. <span>(Details )</span></p><p><b>serviceProvider</b>: <a>Organization/f201</a></p></div>"
+  },
+  "identifier": [
+    {
+      "use": "temp",
+      "value": "Encounter_Roel_20130404"
+    }
+  ],
+  "status": "finished",
+  "class": {
+    "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+    "code": "AMB",
+    "display": "ambulatory"
+  },
+  "type": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "11429006",
+          "display": "Consultation"
+        }
+      ]
+    }
+  ],
+  "priority": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "17621005",
+        "display": "Normal"
+      }
+    ]
+  },
+  "subject": {
+    "reference": "Patient/f201",
+    "display": "Roel"
+  },

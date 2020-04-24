@@ -1,0 +1,98 @@
+mimic.patient: https://mimic.physionet.org/mimictables/patients/
+ROW_ID
+SUBJECT_ID
+GENDER
+DOB
+DOD
+DOD_HOSP
+DOD_SSN
+EXPIRE_FLAG
+
+fhir.patient: https://www.hl7.org/fhir/patient.html (Can be bigger datatypes. Look at website for more information.)
+identifier
+active
+name
+telecom
+gender
+birthDate
+deceased (choose ONE):
+- deceasedBoolean
+- deceasedDateTime
+address
+maritialStatus
+multipleBirth (choose ONE):
+- multipleBirthBoolean (Whether twin,triplets, etc.)
+- multipleBirthInteger (Number in birth sequence, middle child in triplets = 2)
+photo
+contact: (dict)
+- relationship
+- name
+- telecom
+- address
+- gender
+- organization (link)
+- period
+communication: (list)
+- language
+- preferred (bool)
+generalPractitioner (link)
+managingOrganization (link)
+link: (list), (To other resources from the same patient)
+- other (link)
+- type
+
+
+MAPPING:<br>
+
+- As soon as this table is joineed with another table the identifier column needs to be renamed to 'subject'
+- We could add the deathtime from the admissions table, which could be more accurate.
+- Check https://www.hl7.org/fhir/valueset-languages.html for language codes(probably easiest to just create a bigger version defining the language the language name is in and the language name itself)
+- Using MARITIAL_STATUS from last encounter
+
+||Original format | FHIR resource format|
+|------|:-----|:-----|
+|1|mimic.patients.SUBJECT_ID | fhir.patient.identifier|
+|2|mimic.patients.GENDER | fhir.patient.gender|
+|3|mimic.patients.DOB | fhir.patient.birthDate|
+|4|mimic.patients.DOD | fhir.patient.deceasedDateTime|
+|5|mimic.admissions.LANGUAGE | fhir.patient.communication_language|
+|6|mimic.admissions.MARITIAL_STATUS | fhir.patient.maritialStatus|
+
+
+EXAMPLE:
+FHIR patient resource bundle:
+from http://hl7.org/fhir/patient-examples-cypress-template.json.html
+{
+  "resourceType": "Bundle",
+  "id": "b0a5e4277-83c4-4adb-87e2-e3efe3369b6f",
+  "meta": {
+    "lastUpdated": "2012-05-29T23:45:32Z"
+  },
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "http://hl7.org/fhir/Patient/71",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "71",
+        "meta": {
+          "lastUpdated": "2012-06-03T23:45:32Z"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Fletcher, Brenda. MRN:\n          577390</div>"
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577390"
+          }
+        ],
