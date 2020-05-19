@@ -7,7 +7,7 @@ import pandas
 import numpy
 
 
-def transform(input_path, output_path, compress):
+def transform(input_path, output_path):
     """
     Transforms a MIMIC-III CSV table into a collection of FHIR resources, that are saved as a JSON file. If the input
     path or the output path have '.gz' at the end the file read directly from a compressed file or saved to a compressed
