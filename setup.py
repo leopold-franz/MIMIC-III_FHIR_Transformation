@@ -7,7 +7,7 @@ setup(name='mimic_fhir_transfrom',
       packages=['mimic_fhir_transform'],
       python_requires='>=3.7.7',
       install_requires=[
-          "numpy==1.18.5",
+          "numpy==1.22.0",
           "pandas==1.0.4",
       ],
       extras_requires={
